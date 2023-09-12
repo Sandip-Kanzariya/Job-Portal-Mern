@@ -2,7 +2,6 @@
 const User = require("../models/userModel");
 
 
-
 // @desc    Registration user & 
 // @route   POST /user/
 // @access  Public

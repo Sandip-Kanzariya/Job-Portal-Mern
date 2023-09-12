@@ -1,0 +1,24 @@
+
+
+POST http://localhost:3000/user/login HTTP/1.1
+content-type: application/json
+
+{
+    "email": "user@gmail.com",
+    "password": "user123",
+}
+
+POST http://localhost:3000/company/post/add-post HTTP/1.1
+content-type: application/json
+
+{
+    "title": "web",
+    "role": "dev",
+    "vacancy": "50",
+    "description": "fan"
+}
+
+GET http://localhost:3000/company/post/name
+
+
+
