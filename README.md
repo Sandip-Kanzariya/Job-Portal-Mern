@@ -3,12 +3,18 @@
 
 ### .env file 
 ```
-PORT=
-DATABASE=
+NODE_ENV = development / production 
+PORT =
+DATABASE =
+JWT_SECRET = secret key
 ```
 ### Dependencies
 ```
-npm install bcryptjs dotenv express mongoose nodemon
+npm i bcryptjs dotenv express mongoose 
+```
+### Dev Dependencies
+```
+npm i -D nodemon
 ```
 
 ## Front End 
