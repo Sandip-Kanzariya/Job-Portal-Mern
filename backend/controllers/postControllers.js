@@ -32,6 +32,7 @@ const updatePostController = async (req, res) => {
 // @access  Private
 const deletePostController = async (req, res) => {
 
+    const result = await Post.deleteOne({_id:req.params.id}) 
     res.send("delete-post");
 }
 

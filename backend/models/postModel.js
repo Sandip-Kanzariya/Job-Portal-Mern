@@ -1,5 +1,5 @@
 const mongoose =  require('mongoose');
-
+const Company = require("./companyModel");
 
 const postSchema = mongoose.Schema(
   {
@@ -19,6 +19,10 @@ const postSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    company : {
+       type:mongoose.Schema.Types.ObjectId,
+       ref : "Company"
+    }
   },
   {
     timestamps: true,
