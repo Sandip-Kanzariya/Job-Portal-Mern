@@ -20,4 +20,12 @@ const errorHandler = (err, req, res, next) => {
   });
 };
 
-module.exports = { notFound, errorHandler };
+const errorH = (statusCode, message) => {
+    const error = new Error();
+    error.statusCode = statusCode
+    error.message = message
+
+    return error
+}
+
+module.exports = {errorH, notFound, errorHandler };

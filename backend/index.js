@@ -23,7 +23,8 @@ app.use(cors()); // Cors
 app.use(cookieParser()) 
 
 const PORT = process.env.PORT || 4500
-connectDB();
+
+connectDB()
 
 app.get("/", async (req, res) => {
     // res.send({rt : "HEllo,DDU "});

@@ -1,46 +1,66 @@
+const { errorH } = require("../middleware/errorMiddleware");
 const User = require("../models/userModel");
 const { generateToken } = require("../utils/generateToken");
 
 // @desc    Registration user &
 // @route   POST /user/register
 // @access  Public
-const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+const registerUser = async (req, res, next) => {
 
-  const userExists = await User.findOne({ email });
+  try{
 
-  if (userExists) {
-    res.send("HI, ");
-    res.status(400);
-    // throw new Error('User already exists');
-    // @TODO : Server Crashed Handle it
+    const { name, email, password } = req.body;
+    
+    const userExists = await User.findOne({ email });
+    
+    if (userExists) {
+
+      return res.status(409).json({error : "User Already Exsits"})
+      // throw new Error('User already exists');
+      // @TODO : Server Crashed Handle it
+    }
+
+    // set token
+    const user = await User.create({
+      name,
+      email,
+      password,
+    });
+    
+    // generateToken(res, user._id);
+
+    // const {} = user
+    console.log(user);
+    
+    res.status(201).json(user);
   }
-
-  // set token
-  const user = await User.create({
-    name,
-    email,
-    password,
-  });
-
-  generateToken(res, user._id);
-
-  res.send("Added, ");
+  catch(err){
+    // res.status(500).json({error : err.message})
+    next(errorH(500, "Something Went Wrong Bro"));
+  }
 };
 
 // @desc    Login user &
 // @route   POST /user/login
 // @access  Public
 const loginUser = async (req, res) => {
-  const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
+  try
+  {
+    const { email, password } = req.body;
 
-  if (user && (await user.matchPassword(password))) {
-    generateToken(res, user._id);
-    res.send("LoggedIn");
-  } else {
-    res.send("failed login");
+    const user = await User.findOne({ email });
+    
+    if (user && (await user.matchPassword(password))) {
+      generateToken(res, user._id);
+      // res.status(200).json({msg : "Successful Login"});
+
+    } else {
+      res.status(400).json({msg : "failed to Login"});
+    }
+  }
+  catch(err){
+    return res.status(500).json({error : err.message})
   }
 };
 

@@ -5,15 +5,16 @@ const Post = require("../models/postModel");
 // @access  Private
 const addPostController = async (req, res) => {
 
-    // console.log(req.body)
+    console.log(req.body)
     
-    const {title, role, vacancy, description}  = req.body;
-
+    const {title, role, vacancy, description, url}  = req.body;
+    console.log("Photo : " + url);
     const post = await Post.create({
         title,
         role, 
         vacancy, 
         description,
+        url
     });
     
     res.send("add-post");
