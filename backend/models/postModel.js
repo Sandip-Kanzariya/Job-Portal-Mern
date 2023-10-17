@@ -22,7 +22,16 @@ const postSchema = mongoose.Schema(
     url: {
       type: String,
       required: true,
-    }
+    },
+    company : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Company"
+    },
+    applied : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "User"
+    }]
+    
   },
   {
     timestamps: true,

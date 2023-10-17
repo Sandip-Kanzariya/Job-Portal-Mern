@@ -10,6 +10,9 @@ export default function PostForm() {
   //
   const [image, setImage] = useState();
   const [url, setUrl] = useState();
+  // 
+  const companyAuth = localStorage.getItem("company");
+  const company = JSON.parse(companyAuth)._id;
 
   const navigate = useNavigate();
 
@@ -43,7 +46,7 @@ export default function PostForm() {
     try {
       let result = await fetch(`${BASE_URI}/company/post/add-post`, {
         method: "post",
-        body: JSON.stringify({ title, role, vacancy, description, url }),
+        body: JSON.stringify({ title, role, vacancy, description, url, company}),
         headers: {
           "Content-Type": "application/json",
         },

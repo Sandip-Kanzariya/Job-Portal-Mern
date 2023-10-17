@@ -20,7 +20,6 @@ const companySchema = mongoose.Schema(
     posts : [{
         type : mongoose.Schema.Types.ObjectId,
         ref : "Post"
-
     }]
   },
   {

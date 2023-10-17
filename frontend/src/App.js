@@ -10,6 +10,8 @@ import PostForm from './components/post/PostForm';
 import { Auth } from './components/company/Auth';
 
 function App() {
+
+
   return (
     // <div className="App">
     <BrowserRouter>
@@ -20,6 +22,8 @@ function App() {
             <Route path='/signin' element={<SignIn/>} />
             <Route path='/signup' element={<SignUp/>} />
             <Route path='/company' element={<Auth/>} />
+            <Route path='/company/my-posts' element={<Auth/>} />
+
           </Routes>
         </BrowserRouter>
     // </div>

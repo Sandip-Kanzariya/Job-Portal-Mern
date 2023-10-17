@@ -31,7 +31,7 @@ export default function SignUp() {
     const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
     return emailRegex.test(email);
   }
-
+  
   const storeData = async () => {
     if (!name) {
       alert("Name is required.");
@@ -73,7 +73,7 @@ export default function SignUp() {
       setIsLoading(false);
       // console.warn(result);
       if (result.msg === "User Registered Successfully") {
-        navigate("/");
+        navigate("/signin");
       }
     } catch (err) {
       setIsLoading(false);

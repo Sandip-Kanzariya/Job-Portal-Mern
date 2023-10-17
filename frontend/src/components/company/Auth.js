@@ -1,12 +1,117 @@
-import React, { useState } from "react";
-import { ArrowRight } from "lucide-react";
+import React, { useState, useEffect} from "react";
+import { useNavigate } from "react-router-dom";
 
 export function Auth() {
   const [showSignIn, setShowSignIn] = useState(true);
+  const BASE_URI = process.env.REACT_APP_API_URL;
+
+  const navigate = useNavigate();
+
+  // ##################################### SignUp ########################################
+  const [formData, setFormData] = useState({});
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
+  };
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState("");
+
+  function isValidEmail(email) {
+    // You can use a regex pattern or a library for email validation
+    // Here's a simple example using a regex pattern:
+    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+    return emailRegex.test(email);
+  }
+
+  const storeData = async () => {
+    if (!formData["cname"] || !formData["email"] || !formData["password"]) {
+      setIsError("");
+      return;
+    }
+
+    if (!isValidEmail(formData["email"])) {
+      setIsError("Invalid email address.");
+      return;
+    }
+
+    if (formData["password"].length < 6) {
+      setIsError("Password must be atleast 6 characters");
+      return;
+    }
+
+    try {
+      let response = await fetch(`${BASE_URI}/company/admin/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      response = await response.json();
+
+      if (response.msg === "Company Registered Successfully") {
+        setIsError("");
+        setShowSignIn(true);
+      } else {
+        setIsError(response.msg);
+      }
+    } catch (err) {
+      setIsError("Something went wrong");
+    }
+  }; // End of storeData function
+
+  useEffect(() => {
+    const companyAuth = localStorage.getItem("company");
+    if (companyAuth) {
+      navigate("/");
+    }
+  });
+
+  // ##################################### SignIn  ########################################
+  const [loginData, setLoginData] = useState({});
+  const [loginError, setLoginError] = useState("");
+
+  const handleLogin = (e) => {
+    setLoginData({ ...loginData, [e.target.id]: e.target.value.trim() });
+  };
+
+  const verifyData = async () => {
+    if (!loginData["email"] || !loginData["password"]) {
+      setLoginError("");
+      return;
+    }
+
+    if (!isValidEmail(loginData["email"])) {
+      setLoginError("Invalid email address.");
+      return;
+    }
+
+    try {
+      let response = await fetch(`${BASE_URI}/company/admin/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loginData),
+      });
+      response = await response.json();
+
+      if (!response.msg) {
+        setLoginError("");
+
+        //
+        localStorage.setItem("company", JSON.stringify(response));
+
+        navigate("/add-post");
+      } else {
+        setLoginError(response.msg);
+      }
+    } catch (err) {
+      setLoginError("Something went wrong");
+    }
+  }; // End of verifyData function
 
   return (
     <section className="mt-10 border-collapse">
-
       <div className="flex justify-center ">
         <button
           className={`btn-toggle ${
@@ -27,38 +132,34 @@ export function Auth() {
       </div>
 
       {/*Sign Up*/}
-      <div className="flex items-center justify-center px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-8">
+      <div className="items-center justify-center px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-8">
         {!showSignIn && (
           <div className="xl:mx-auto xl:w-full xl:max-w-sm 2xl:max-w-md">
             <h2 className="text-center text-2xl font-bold leading-tight text-black">
-              Sign up to create account
+              Create Your Company Account
             </h2>
-            <p className="mt-2 text-center text-base text-gray-600">
-              Already have an account?{" "}
-              <a
-                href="#"
-                title=""
-                className="font-medium text-black transition-all duration-200 hover:underline"
-              >
-                Sign In
-              </a>
-            </p>
+            <center className="text-red-500"> {isError} </center>
             <form action="#" method="POST" className="mt-8">
               <div className="space-y-5">
                 <div>
                   <label
-                    htmlFor="name"
+                    htmlFor="cname"
                     className="text-base font-medium text-gray-900"
                   >
                     {" "}
-                    Full Name{" "}
-                  </label>
+                    Company Name{" "}
+                  </label>{" "}
+                  {!formData["cname"] && (
+                    <span className="text-red-500"> * </span>
+                  )}
+                  {/*!formData["cname"] && <span className="text-red-500"> cname required </span> */}
                   <div className="mt-2">
                     <input
                       className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       type="text"
-                      placeholder="Full Name"
-                      id="name"
+                      placeholder="Company Name"
+                      id="cname"
+                      onChange={handleChange}
                     ></input>
                   </div>
                 </div>
@@ -70,31 +171,37 @@ export function Auth() {
                     {" "}
                     Email address{" "}
                   </label>
+                  {!formData["email"] && (
+                    <span className="text-red-500"> * </span>
+                  )}
                   <div className="mt-2">
                     <input
                       className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       type="email"
                       placeholder="Email"
                       id="email"
+                      onChange={handleChange}
                     ></input>
                   </div>
                 </div>
                 <div>
-                  <div className="flex items-center justify-between">
-                    <label
-                      htmlFor="password"
-                      className="text-base font-medium text-gray-900"
-                    >
-                      {" "}
-                      Password{" "}
-                    </label>
-                  </div>
+                  <label
+                    htmlFor="password"
+                    className="text-base font-medium text-gray-900"
+                  >
+                    {" "}
+                    Password{" "}
+                  </label>{" "}
+                  {!formData["password"] && (
+                    <span className="text-red-500"> * </span>
+                  )}
                   <div className="mt-2">
                     <input
                       className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       type="password"
                       placeholder="Password"
                       id="password"
+                      onChange={handleChange}
                     ></input>
                   </div>
                 </div>
@@ -102,30 +209,13 @@ export function Auth() {
                   <button
                     type="button"
                     className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
+                    onClick={() => storeData()}
                   >
-                    Create Account <ArrowRight className="ml-2" size={16} />
+                    Create Account
                   </button>
                 </div>
               </div>
             </form>
-            <div className="mt-3 space-y-3">
-              <button
-                type="button"
-                className="relative inline-flex w-full items-center justify-center rounded-md border border-gray-400 bg-white px-3.5 py-2.5 font-semibold text-gray-700 transition-all duration-200 hover:bg-gray-100 hover:text-black focus:bg-gray-100 focus:text-black focus:outline-none"
-              >
-                <span className="mr-2 inline-block">
-                  <svg
-                    className="h-6 w-6 text-rose-500"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a5.27 5.27 0 0 1-5.279-5.28 5.27 5.27 0 0 1 5.279-5.279c1.259 0 2.397.447 3.29 1.178l2.6-2.599c-1.584-1.381-3.615-2.233-5.89-2.233a8.908 8.908 0 0 0-8.934 8.934 8.907 8.907 0 0 0 8.934 8.934c4.467 0 8.529-3.249 8.529-8.934 0-.528-.081-1.097-.202-1.625z"></path>
-                  </svg>
-                </span>
-                Sign up with Google
-              </button>
-            </div>
           </div>
         )}
 
@@ -133,18 +223,9 @@ export function Auth() {
         {showSignIn && (
           <div className="xl:mx-auto xl:w-full xl:max-w-sm 2xl:max-w-md">
             <h2 className="text-center text-2xl font-bold leading-tight text-black">
-              Sign in to your account
+              Sign in to your Company Account
             </h2>
-            <p className="mt-2 text-center text-sm text-gray-600 ">
-              Don&apos;t have an account?{" "}
-              <a
-                href="#"
-                title=""
-                className="font-semibold text-black transition-all duration-200 hover:underline"
-              >
-                Create a free account
-              </a>
-            </p>
+            <center className="text-red-500"> {loginError} </center>
             <form action="#" method="POST" className="mt-8">
               <div className="space-y-5">
                 <div>
@@ -154,38 +235,38 @@ export function Auth() {
                   >
                     {" "}
                     Email address{" "}
-                  </label>
+                  </label>{" "}
+                  {!loginData["email"] && (
+                    <span className="text-red-500"> * </span>
+                  )}
                   <div className="mt-2">
                     <input
                       className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       type="email"
                       placeholder="Email"
+                      id="email"
+                      onChange={handleLogin}
                     ></input>
                   </div>
                 </div>
                 <div>
-                  <div className="flex items-center justify-between">
-                    <label
-                      htmlFor=""
-                      className="text-base font-medium text-gray-900"
-                    >
-                      {" "}
-                      Password{" "}
-                    </label>
-                    <a
-                      href="#"
-                      title=""
-                      className="text-sm font-semibold text-black hover:underline"
-                    >
-                      {" "}
-                      Forgot password?{" "}
-                    </a>
-                  </div>
+                  <label
+                    htmlFor=""
+                    className="text-base font-medium text-gray-900"
+                  >
+                    {" "}
+                    Password{" "}
+                  </label>{" "}
+                  {!loginData["password"] && (
+                    <span className="text-red-500"> * </span>
+                  )}
                   <div className="mt-2">
                     <input
                       className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       type="password"
                       placeholder="Password"
+                      id="password"
+                      onChange={handleLogin}
                     ></input>
                   </div>
                 </div>
@@ -193,32 +274,32 @@ export function Auth() {
                   <button
                     type="button"
                     className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
+                    onClick={() => verifyData()}
                   >
-                    Get started <ArrowRight className="ml-2" size={16} />
+                    Sign In
                   </button>
                 </div>
+
+                <a
+                  href="#"
+                  title=""
+                  className="text-sm font-semibold text-black hover:underline"
+                >
+                  {" "}
+                  Forgot password?{" "}
+                </a>
               </div>
             </form>
-            <div className="mt-3 space-y-3">
-              <button
-                type="button"
-                className="relative inline-flex w-full items-center justify-center rounded-md border border-gray-400 bg-white px-3.5 py-2.5 font-semibold text-gray-700 transition-all duration-200 hover:bg-gray-100 hover:text-black focus:bg-gray-100 focus:text-black focus:outline-none"
-              >
-                <span className="mr-2 inline-block">
-                  <svg
-                    className="h-6 w-6 text-rose-500"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a5.27 5.27 0 0 1-5.279-5.28 5.27 5.27 0 0 1 5.279-5.279c1.259 0 2.397.447 3.29 1.178l2.6-2.599c-1.584-1.381-3.615-2.233-5.89-2.233a8.908 8.908 0 0 0-8.934 8.934 8.907 8.907 0 0 0 8.934 8.934c4.467 0 8.529-3.249 8.529-8.934 0-.528-.081-1.097-.202-1.625z"></path>
-                  </svg>
-                </span>
-                Sign in with Google
-              </button>
-            </div>
           </div>
         )}
+        <br />
+        <center>
+          {" "}
+          <span className="text-red-500">
+            <b>*</b>
+          </span>{" "}
+          <b>indicates required field</b>
+        </center>
       </div>
     </section>
   );

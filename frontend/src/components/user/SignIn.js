@@ -1,14 +1,20 @@
 import { React, useState } from "react";
 
+
+
 import { useNavigate } from "react-router-dom";
 
 export function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const [error, seterror] = useState(false);
+
+  // const { loading, error } = useSelector((state) => state.user);
 
   const navigate = useNavigate();
+
   //
   const BASE_URI = process.env.REACT_APP_API_URL;
 
@@ -34,28 +40,36 @@ export function SignIn() {
       alert("Password is required.");
       return;
     }
-
+    
     try {
-      setIsLoading(true);
-      setIsError(false);
+      setLoading(true);
+      seterror(false);
+      
       let result = await fetch(`${BASE_URI}/user/login`, {
         method: "post",
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password}),
         headers: {
           "Content-Type": "application/json",
         },
       });
       result = await result.json();
-      setIsLoading(false);
+      // console.log(result);
+
+      setLoading(false);
+      
       if (result.msg === "Successful Login") {
+
         navigate("/");
       } else {
-        setIsError(true);
+        seterror(true);
+        
+        return;
       }
     } catch (err) {
-      setIsLoading(false);
-      setIsError(true);
-      console.log(err);
+      setLoading(false);
+      seterror(true);
+      // console.log(err);
+      
     }
   };
 
@@ -78,7 +92,9 @@ export function SignIn() {
               </a>
             </p>
             <br />
-            {isError && <p className="text-red-600">Something Went Wrong</p>}
+            <p className="text-red-600">
+            {error ? error.message || "Something Went Wrong" : ""} </p>
+
             <form action="#" method="POST" className="mt-8">
               <div className="space-y-5">
                 <div>
@@ -130,12 +146,12 @@ export function SignIn() {
 
                 <div>
                   <button
-                    disabled={isLoading}
+                    disabled={loading}
                     type="button"
                     className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
                     onClick={handleSignIn}
                   >
-                    {isLoading ? "Loading..." : "Sign In"}
+                    {loading ? "Loading..." : "Sign In"}
                   </button>
                 </div>
               </div>

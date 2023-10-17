@@ -36,6 +36,6 @@ REACT_APP_CLOUD_API =
 
 ```
 
-npm i @reduxjs/toolkit react-redux
+npm i @reduxjs/toolkit react-redux redux-persist
 
 ```

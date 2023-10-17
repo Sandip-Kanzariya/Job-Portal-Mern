@@ -6,61 +6,48 @@ const { generateToken } = require("../utils/generateToken");
 // @route   POST /user/register
 // @access  Public
 const registerUser = async (req, res, next) => {
+  const { name, email, password } = req.body;
 
-  try{
-
-    const { name, email, password } = req.body;
-    
+  try {
     const userExists = await User.findOne({ email });
-    
-    if (userExists) {
 
-      return res.status(409).json({error : "User Already Exsits"})
-      // throw new Error('User already exists');
-      // @TODO : Server Crashed Handle it
+    if (userExists) {
+      return next(errorH(409, "User Already Exsits"));
     }
 
-    // set token
     const user = await User.create({
       name,
       email,
       password,
     });
-    
-    // generateToken(res, user._id);
 
-    // const {} = user
-    console.log(user);
-    
-    res.status(201).json(user);
-  }
-  catch(err){
-    // res.status(500).json({error : err.message})
-    next(errorH(500, "Something Went Wrong Bro"));
+    res.status(201).json({msg : "User Registered Successfully"});
+  } catch (err) {
+    next(500, "Something Went Wrong");
   }
 };
 
 // @desc    Login user &
 // @route   POST /user/login
 // @access  Public
-const loginUser = async (req, res) => {
+const loginUser = async (req, res, next) => {
+  const { email, password } = req.body;
 
-  try
-  {
-    const { email, password } = req.body;
-
+  try {
     const user = await User.findOne({ email });
-    
+
+    if (!user) {
+    res.status(404).json({message : "User Not Found"});
+
+    }
+
     if (user && (await user.matchPassword(password))) {
       generateToken(res, user._id);
-      // res.status(200).json({msg : "Successful Login"});
-
     } else {
-      res.status(400).json({msg : "failed to Login"});
+      res.status(401).json({message : "Invalid Credentials"});
     }
-  }
-  catch(err){
-    return res.status(500).json({error : err.message})
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -69,11 +56,13 @@ const loginUser = async (req, res) => {
 // @access  Private
 const logoutUser = (req, res) => {
   // Clear token
-  res.cookie("jwt", "", {
-    httpOnly: true,
-    expires: new Date(0),
-  });
-  res.status(200).json({ message: "Logged Out" });
+  // res.cookie("jwt", "", {
+  //   httpOnly: true,
+  //   expires: new Date(0),
+  // });
+  // res.status(200).json({ message: "Logged Out" });
+
+  res.clearCookie("jwt").status(200).json({ message: "Logged Out" });
 };
 
 // @desc    Profile of user &

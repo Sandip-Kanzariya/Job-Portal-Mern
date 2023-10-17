@@ -7,7 +7,7 @@ export default function Home() {
   const [postList, setPostList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-
+  
   //
   const BASE_URI = process.env.REACT_APP_API_URL;
 

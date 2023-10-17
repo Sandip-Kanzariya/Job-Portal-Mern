@@ -1,39 +1,62 @@
 "use client";
 
-import React from "react";
-import { Link, NavLink } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
 
 const menuItems = [
   {
     name: "Home",
     href: "/",
+    active: true,
   },
   {
     name: "Add Post",
     href: "/add-post",
+    active: false,
   },
   {
     name: "Profile",
     href: "/s",
+    active: false,
   },
   {
     name: "SignIn",
     href: "/signin",
+    active: true,
   },
   {
     name: "SignUp",
     href: "/signup",
+    active: true,
   },
   {
-    name: "Auth",
+    name: "Company Zone",
     href: "/company",
+    active: true,
+  },
+  {
+    name: "My Posts",
+    href: "/company/my-posts",
+    active: false,
   },
 ];
 
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
+  const companyAuth = localStorage.getItem("company");
+
+
+  if (companyAuth) {
+    menuItems[3].active = false;
+    menuItems[4].active = false;
+    menuItems[5].active = false;
+
+    menuItems[6].active = true;
+    menuItems[1].active = true;
+  }
+  
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -60,20 +83,25 @@ export default function Nav() {
         </div>
         <div className="hidden lg:block">
           <ul className="ml-12 inline-flex space-x-8">
-            {menuItems.map((item) => (
-              <li key={item.name}>
-                <NavLink
-                  className={({ isActive }) =>
-                    `inline-flex items-center text-sm font-semibold 
+            {menuItems.map((item) =>
+              item.active ? (
+                <li key={item.name}>
+                  <NavLink
+                    className={({ isActive }) =>
+                      `inline-flex items-center text-sm font-semibold 
                     ${isActive ? "text-orange-800" : "text-gray-800"} 
                     hover:text-gray-900`
-                  }
-                  to={item.href}
-                >
-                  {item.name}
-                </NavLink>
-              </li>
-            ))}
+                    }
+                    to={item.href}
+                  >
+                    {item.name}
+                  </NavLink>
+                </li>
+              ) : (
+                <></>
+              )
+            )}
+
           </ul>
         </div>
         <div className="flex grow justify-end">
@@ -133,24 +161,27 @@ export default function Nav() {
                 </div>
                 <div className="mt-6">
                   <nav className="grid gap-y-4">
-                    {menuItems.map((item) => (
-
-                      <NavLink
-                        className={({ isActive }) =>
-                          `-m-3 flex items-center rounded-md p-3 text-sm font-semibold hover:bg-gray-50 
+                    {menuItems.map((item) =>
+                      item.active ? (
+                        <NavLink
+                          className={({ isActive }) =>
+                            `-m-3 flex items-center rounded-md p-3 text-sm font-semibold hover:bg-gray-50 
                         ${isActive ? "text-orange-800" : "text-gray-800"}`
-                        }
-                        to={item.href}
-                        key={item.name}
-                      >
-                        <span className="ml-3 text-base font-medium">
-                          {item.name}
-                        </span>
-                        <span>
-                          <ChevronRight className="ml-3 h-4 w-4" />
-                        </span>
-                      </NavLink>
-                    ))}
+                          }
+                          to={item.href}
+                          key={item.name}
+                        >
+                          <span className="ml-3 text-base font-medium">
+                            {item.name}
+                          </span>
+                          <span>
+                            <ChevronRight className="ml-3 h-4 w-4" />
+                          </span>
+                        </NavLink>
+                      ) : (
+                        <></>
+                      )
+                    )}
                   </nav>
                 </div>
 

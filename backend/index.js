@@ -5,7 +5,7 @@ const connectDB = require('./db/config');
 const dotenv = require('dotenv');
 
 // middleware 
-const {notFound, errorHandler} = require('./middleware/errorMiddleware');
+const {notFound, errorHandler, errorH} = require('./middleware/errorMiddleware');
 
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
@@ -46,9 +46,10 @@ app.use("/user/", userRoutes);
 app.use("/company/post", postRoutes);
 app.use("/company/admin", companyRoutes); // 
 
+app.use(errorH);
 
 // custome middleware 
-app.use(notFound);
-app.use(errorHandler);
+// app.use(notFound);
+// app.use(errorHandler);
 
 app.listen(PORT, () => {console.log("HI, SS")});
