@@ -1,35 +1,39 @@
-# Job-Portal Using MERN 
+# Job-Portal Using MERN
 
+### .env file for
 
-### .env file for 
 ```
-NODE_ENV = development / production 
+NODE_ENV = development / production
 PORT = 4500
 DATABASE =
 JWT_SECRET = secret_key
 ```
 
 ### Dependencies
+
 ```
-npm i bcryptjs dotenv express mongoose 
+npm i bcryptjs dotenv express mongoose
 ```
+
 ### Dev Dependencies
+
 ```
 npm i -D nodemon
 ```
 
-## Front End 
+## Front End
 
-### .env file 
+### .env file
 
 ```
-REACT_APP_API_URI = http://localhost:4500
-REACT_APP_PRESET = 
-REACT_APP_CLOUD = 
-REACT_APP_CLOUD_API = 
+REACT_APP_API_URL = http://localhost:4500
+REACT_APP_PRESET =
+REACT_APP_CLOUD =
+REACT_APP_CLOUD_API =
 ```
 
 ### Dependencies
+
 ```
 
 npm i @reduxjs/toolkit react-redux
