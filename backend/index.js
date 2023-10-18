@@ -12,6 +12,8 @@ const postRoutes = require('./routes/postRoutes');
 const companyRoutes = require('./routes/companyRoutes');
 
 const Post = require('./models/postModel');
+const Company = require('./models/companyModel');
+
 const cookieParser = require('cookie-parser');
 
 dotenv.config({path : '../.env'});
@@ -32,12 +34,13 @@ app.get("/", async (req, res) => {
     let post = await Post.find();
 
     if(post.length > 0){
-        res.send(post)
+        res.send(post);
     }
     else{
         res.send({result : "No Post Found"});
     }
 })
+
 
 // 
 app.use("/user/", userRoutes);
@@ -45,6 +48,7 @@ app.use("/user/", userRoutes);
 // 
 app.use("/company/post", postRoutes);
 app.use("/company/admin", companyRoutes); // 
+app.use("/company/", companyRoutes);
 
 app.use(errorH);
 

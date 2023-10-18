@@ -34,7 +34,8 @@ export default function Home() {
   }, []);
 
   return (
-    <center>
+    // <div className="flex flex-wrap items-center">
+    <div className="grid grid-cols-1 gap-[1px] md:grid-cols-2">
       {/* <button onClick={getPosts}>Data</button>*/}
       {isLoading && <Loader />}
 
@@ -45,6 +46,6 @@ export default function Home() {
       ) : (
         !isLoading && <h1>There is yet not any Post </h1>
       )}
-    </center>
+    </div>
   );
 }

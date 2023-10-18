@@ -1,16 +1,22 @@
 import Card from "./Card";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+import { set } from "mongoose";
 
 export default function PostForm() {
-  const [title, setTitle] = useState();
-  const [role, setRole] = useState();
-  const [description, setDescription] = useState();
-  const [vacancy, setVacancy] = useState();
+  const [postData, setPostData] = useState({});
+  const [isError, setIsError] = useState("");
+
+
+  const handleChange = (e) => {
+    setPostData({ ...postData, [e.target.id]: e.target.value.trim() });
+  };
+
   //
   const [image, setImage] = useState();
   const [url, setUrl] = useState();
-  // 
+  //
   const companyAuth = localStorage.getItem("company");
   const company = JSON.parse(companyAuth)._id;
 
@@ -29,15 +35,28 @@ export default function PostForm() {
       .then((resp) => resp.json())
       .then((d) => {
         setUrl(d.url);
+        console.log("URL : " + url);
       })
       .catch((err) => console.log(err));
 
-    console.log(url);
   };
+
+  const handleImage = async (e) => {
+    setImage(e.target.files[0]);
+
+    await storeImage();
+  }
 
   const storePost = async () => {
     // Image Upload
     await storeImage();
+
+    setIsError("");
+    if (!url || !postData["title"] || !postData["role"] || !postData["vacancy"] || !postData["description"]) {
+      setIsError("");
+      return;
+    }
+
 
     // setIsLoading(true);
     //
@@ -46,7 +65,11 @@ export default function PostForm() {
     try {
       let result = await fetch(`${BASE_URI}/company/post/add-post`, {
         method: "post",
-        body: JSON.stringify({ title, role, vacancy, description, url, company}),
+        body: JSON.stringify({
+          ...postData,
+          url,
+          company,
+        }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -67,99 +90,140 @@ export default function PostForm() {
   };
 
   return (
-    <center>
-      <div className="w-full max-w-xs">
-        <form className="bg-white shadow-md rounded px-8 pt-6 pb-8">
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              for="title"
-            >
-              Title
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="title"
-              type="text"
-              placeholder="Title"
-              value={title}
-              onChange={(t) => setTitle(t.target.value)}
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              for="role"
-            >
-              Role
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="role"
-              type="text"
-              placeholder="Role"
-              value={role}
-              onChange={(r) => setRole(r.target.value)}
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              for="vacancy"
-            >
-              Vacancy
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="vacancy"
-              type="text"
-              placeholder="Vacancy"
-              value={vacancy}
-              onChange={(v) => setVacancy(v.target.value)}
-            />
-          </div>
+    <section className="">
+      <div className="items-center justify-center bg-white px-4 py-4 sm:px-6 sm:py-10 lg:px-8">
+        <div className="xl:mx-auto xl:w-full xl:max-w-sm 2xl:max-w-md">
+          <h2 className="text-2xl font-bold leading-tight text-black">
+            Write Post
+          </h2>
 
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              for="image"
-            >
-              Post Image
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="image"
-              type="file"
-              onChange={(e) => setImage(e.target.files[0])}
-            />
-          </div>
+          <form action="#" method="POST" className="mt-2">
+            <div className="space-y-5">
+              <div>
+                 
+                  <label
+                    htmlFor="image"
+                    className="text-base font-medium text-gray-900"
+                  >
+                    Post Image{" "}
+                  </label>{!url && (
+                    <span className="text-red-500"> * </span>
+                  )}
+                 
+                <div className="mt-2">
+                  <input
+                    className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="image"
+                    type="file"
+                    onChange={handleImage}
+                  ></input>
+                </div>
+              </div>
+              <div>
+                <label
+                  htmlFor=""
+                  className="text-base font-medium text-gray-900"
+                >
+                  {" "}
+                  Title{" "}
+                </label> {!postData["title"] && (
+                  <span className="text-red-500"> * </span>
+                )}
+                
+                <div className="mt-2">
+                  <input
+                    className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="title"
+                    type="text"
+                    placeholder="Title"
+                    
+                    onChange={handleChange}
+                  ></input>
+                </div>
+              </div>
 
-          <div className="mb-6">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              for="description"
-            >
-              Description
-            </label>
-            <textarea
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-              id="description"
-              placeholder="Description"
-              value={description}
-              onChange={(d) => setDescription(d.target.value)}
-            ></textarea>
-          </div>
-          <div className="flex items-center justify-center">
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="button"
-              onClick={storePost}
-            >
-              Save
-            </button>
-          </div>
-        </form>
+              <div>
+                
+                  <label
+                    htmlFor=""
+                    className="text-base font-medium text-gray-900"
+                  >
+                    {" "}
+                    Role{" "}
+                  </label>{!postData["role"] && (
+                    <span className="text-red-500"> * </span>
+                  )}
+
+                
+                <div className="mt-2">
+                  <input
+                    className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="role"
+                    type="text"
+                    placeholder="Role"
+                    
+                    onChange={handleChange}
+                  ></input>
+                </div>
+              </div>
+              <div>
+                
+                  <label
+                    htmlFor=""
+                    className="text-base font-medium text-gray-900"
+                  >
+                    Vacancy{" "}
+                  </label>{!postData["vacancy"] && (
+                    <span className="text-red-500"> * </span>
+                  )}
+              
+                <div className="mt-2">
+                  <input
+                    className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="vacancy"
+                    type="number"
+                    placeholder="Vacancy"
+                    
+                    onChange={handleChange}
+                  ></input>
+                </div>
+              </div>
+
+              <div>
+                 
+                  <label
+                    htmlFor=""
+                    className="text-base font-medium text-gray-900"
+                  >
+                    Description{" "}
+                  </label>{!postData["description"] && (
+                    <span className="text-red-500"> * </span>
+                  )}
+                
+                <div className="mt-2">
+                  <textarea
+                    className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="description"
+                    placeholder="Description"
+                   
+                    onChange={handleChange}
+                  ></textarea>
+                </div>
+              </div>
+
+              <div>
+                <button
+                  type="button"
+                  onClick={storePost}
+                  className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
+                >
+                  Post <ArrowRight className="ml-2" size={16} />
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
-    </center>
+    </section>
   );
 }

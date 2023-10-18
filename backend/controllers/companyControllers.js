@@ -47,7 +47,12 @@ const loginCompany = async (req,res)=>{
     }
 }
 
+const getCompany = async (req, res) => {
+    const company = await Company.findById(req.params.cid);
+    res.send(company);
+}
 module.exports = {
     registerCompany,
     loginCompany,
+    getCompany,
 }

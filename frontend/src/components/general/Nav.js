@@ -5,40 +5,40 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
 
 const menuItems = [
-  {
+  { // 0
     name: "Home",
     href: "/",
     active: true,
   },
-  {
-    name: "Add Post",
-    href: "/add-post",
+  { // 1
+    name: "My Posts",
+    href: "/company/my-posts",
     active: false,
   },
-  {
+  { // 2
+    name: "Add Post",
+    href: "company/add-post",
+    active: false,
+  },
+  { // 3
     name: "Profile",
     href: "/s",
     active: false,
   },
-  {
+  { // 4
     name: "SignIn",
     href: "/signin",
     active: true,
   },
-  {
+  { // 5
     name: "SignUp",
     href: "/signup",
     active: true,
   },
-  {
+  { // 6
     name: "Company Zone",
     href: "/company",
     active: true,
-  },
-  {
-    name: "My Posts",
-    href: "/company/my-posts",
-    active: false,
   },
 ];
 
@@ -46,23 +46,49 @@ export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const companyAuth = localStorage.getItem("company");
+  const userAuth = localStorage.getItem("user");
 
+  const navigate = useNavigate();
+
+  if(userAuth){
+    menuItems[1].active = false;
+    menuItems[2].active = false;
+    menuItems[3].active = true;
+    menuItems[4].active = false;
+    menuItems[5].active = false;
+    menuItems[6].active = false;
+  }
 
   if (companyAuth) {
+    
+    menuItems[1].active = true;
+    menuItems[2].active = true;
     menuItems[3].active = false;
     menuItems[4].active = false;
     menuItems[5].active = false;
-
-    menuItems[6].active = true;
-    menuItems[1].active = true;
+    menuItems[6].active = false;
   }
-  
+
+  const logOut = () => {
+    localStorage.removeItem("company");
+    localStorage.removeItem("user");
+
+    menuItems[1].active = false;
+    menuItems[2].active = false;
+    menuItems[3].active = false;
+    menuItems[4].active = true;
+    menuItems[5].active = true;
+    menuItems[6].active = true;
+
+    navigate("/");
+  };
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   return (
-    <div className="relative w-full bg-white border border-gray-350">
+    <div className="relative w-full bg-slate-100 border border-b-slate-900">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 sm:px-6 lg:px-8">
         <div className="inline-flex items-center space-x-2">
           <span>
@@ -101,14 +127,24 @@ export default function Nav() {
                 <></>
               )
             )}
-
+              
+            {userAuth || companyAuth ? 
+            <li>
+              <button
+                type="button"
+                className="rounded-md bg-red-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-red-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                onClick={logOut}
+              >
+                Logout
+              </button>
+            </li> : <></>}
           </ul>
         </div>
         <div className="flex grow justify-end">
           <input
-            className="flex h-10 w-[250px] rounded-md bg-gray-100 px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-10 w-[250px] rounded-md bg-gray-100 border border-black px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
             type="text"
-            placeholder="Serach"
+            placeholder="Search"
           ></input>
         </div>
 
@@ -182,6 +218,18 @@ export default function Nav() {
                         <></>
                       )
                     )}
+                    
+                    {userAuth || companyAuth ?
+                    <li>
+                      <button
+                        type="button"
+                        className="rounded-md bg-red-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-red-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                        onClick={logOut}
+                      >
+                        Logout
+                      </button>
+                    </li> : <></>}
+
                   </nav>
                 </div>
 

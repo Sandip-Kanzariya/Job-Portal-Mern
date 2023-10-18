@@ -8,22 +8,22 @@ const { generateToken } = require("../utils/generateToken");
 const registerUser = async (req, res, next) => {
   const { name, email, password } = req.body;
 
+  const userExists = await User.findOne({ email });
+
+  if (userExists) {
+    return res.status(400).json({ msg: "User already exists with this email" });
+  }
+
   try {
-    const userExists = await User.findOne({ email });
-
-    if (userExists) {
-      return next(errorH(409, "User Already Exsits"));
-    }
-
     const user = await User.create({
       name,
       email,
       password,
     });
 
-    res.status(201).json({msg : "User Registered Successfully"});
+    res.status(201).json({ msg: "User Registered Successfully" });
   } catch (err) {
-    next(500, "Something Went Wrong");
+    res.status(500).json({ msg: "Something Went Wrong" });
   }
 };
 
@@ -32,22 +32,27 @@ const registerUser = async (req, res, next) => {
 // @access  Public
 const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
+  
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(404).json({ msg: "User Not exist with this email." });
+  }
 
   try {
-    const user = await User.findOne({ email });
-
-    if (!user) {
-    res.status(404).json({message : "User Not Found"});
-
-    }
 
     if (user && (await user.matchPassword(password))) {
-      generateToken(res, user._id);
+      // generateToken(res, user._id);
+
+      const { password, ...rest } = user._doc;
+      return res.status(201).json(rest);
+      
+
     } else {
-      res.status(401).json({message : "Invalid Credentials"});
+      return res.status(401).json({ msg: "Wrong Password" });
     }
   } catch (err) {
-    next(err);
+    res.status(500).json({ msg: "Something Went Wrong" });
   }
 };
 

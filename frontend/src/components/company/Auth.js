@@ -1,14 +1,17 @@
+import { set } from "mongoose";
 import React, { useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 
 export function Auth() {
   const [showSignIn, setShowSignIn] = useState(true);
+
   const BASE_URI = process.env.REACT_APP_API_URL;
 
   const navigate = useNavigate();
 
   // ##################################### SignUp ########################################
   const [formData, setFormData] = useState({});
+  
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
@@ -23,6 +26,7 @@ export function Auth() {
   }
 
   const storeData = async () => {
+    setIsError("");
     if (!formData["cname"] || !formData["email"] || !formData["password"]) {
       setIsError("");
       return;
@@ -39,6 +43,7 @@ export function Auth() {
     }
 
     try {
+      setIsLoading(true);
       let response = await fetch(`${BASE_URI}/company/admin/register`, {
         method: "POST",
         headers: {
@@ -48,6 +53,7 @@ export function Auth() {
       });
       response = await response.json();
 
+      setIsLoading(false);
       if (response.msg === "Company Registered Successfully") {
         setIsError("");
         setShowSignIn(true);
@@ -55,6 +61,7 @@ export function Auth() {
         setIsError(response.msg);
       }
     } catch (err) {
+      setIsLoading(false);
       setIsError("Something went wrong");
     }
   }; // End of storeData function
@@ -101,7 +108,7 @@ export function Auth() {
         //
         localStorage.setItem("company", JSON.stringify(response));
 
-        navigate("/add-post");
+        navigate("/company/my-posts");
       } else {
         setLoginError(response.msg);
       }
@@ -155,7 +162,7 @@ export function Auth() {
                   {/*!formData["cname"] && <span className="text-red-500"> cname required </span> */}
                   <div className="mt-2">
                     <input
-                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       type="text"
                       placeholder="Company Name"
                       id="cname"
@@ -176,7 +183,7 @@ export function Auth() {
                   )}
                   <div className="mt-2">
                     <input
-                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       type="email"
                       placeholder="Email"
                       id="email"
@@ -197,7 +204,7 @@ export function Auth() {
                   )}
                   <div className="mt-2">
                     <input
-                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       type="password"
                       placeholder="Password"
                       id="password"
@@ -211,7 +218,7 @@ export function Auth() {
                     className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
                     onClick={() => storeData()}
                   >
-                    Create Account
+                  {isLoading ? "Loading..." : "Create Account"}
                   </button>
                 </div>
               </div>
@@ -241,7 +248,7 @@ export function Auth() {
                   )}
                   <div className="mt-2">
                     <input
-                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       type="email"
                       placeholder="Email"
                       id="email"
@@ -262,7 +269,7 @@ export function Auth() {
                   )}
                   <div className="mt-2">
                     <input
-                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       type="password"
                       placeholder="Password"
                       id="password"

@@ -1,15 +1,16 @@
 import { React, useState } from "react";
 
-
-
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export function SignIn() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({});
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
 
   const [loading, setLoading] = useState(false);
-  const [error, seterror] = useState(false);
+  const [isError, setIsError] = useState("");
 
   // const { loading, error } = useSelector((state) => state.user);
 
@@ -18,58 +19,50 @@ export function SignIn() {
   //
   const BASE_URI = process.env.REACT_APP_API_URL;
 
+  function isValidEmail(email) {
+    // You can use a regex pattern or a library for email validation
+    // Here's a simple example using a regex pattern:
+    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+    return emailRegex.test(email);
+  }
+
   const handleSignIn = async () => {
-    function isValidEmail(email) {
-      // You can use a regex pattern or a library for email validation
-      // Here's a simple example using a regex pattern:
-      const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-      return emailRegex.test(email);
-    }
+    setIsError("");
 
-    if (!email) {
-      alert("Email is required.");
+    if (!formData["email"] || !formData["password"]) {
+      setIsError("");
       return;
     }
 
-    if (!isValidEmail(email)) {
-      alert("Invalid email address.");
+    if (!isValidEmail(formData["email"])) {
+      setIsError("Invalid email address.");
       return;
     }
 
-    if (!password) {
-      alert("Password is required.");
-      return;
-    }
-    
     try {
       setLoading(true);
-      seterror(false);
-      
+
       let result = await fetch(`${BASE_URI}/user/login`, {
         method: "post",
-        body: JSON.stringify({ email, password}),
+        body: JSON.stringify(formData),
         headers: {
           "Content-Type": "application/json",
         },
       });
       result = await result.json();
-      // console.log(result);
-
       setLoading(false);
-      
-      if (result.msg === "Successful Login") {
+
+      if (!result.msg) {
+        localStorage.setItem("user", JSON.stringify(result));
 
         navigate("/");
       } else {
-        seterror(true);
-        
+        setIsError(result.msg);
         return;
       }
     } catch (err) {
       setLoading(false);
-      seterror(true);
-      // console.log(err);
-      
+      setIsError("Something Went Wrong");
     }
   };
 
@@ -83,17 +76,17 @@ export function SignIn() {
             </h2>
             <p className="mt-2 text-sm text-gray-600">
               Don&apos;t have an account?{" "}
-              <a
-                href="/signup"
+              <Link
+                to="/signup"
                 title=""
                 className="font-semibold text-black transition-all duration-200 hover:underline"
               >
                 Create a free account
-              </a>
+              </Link>
             </p>
-            <br />
-            <p className="text-red-600">
-            {error ? error.message || "Something Went Wrong" : ""} </p>
+            <center>
+              <center className="text-red-500"> {isError} </center>
+            </center>
 
             <form action="#" method="POST" className="mt-8">
               <div className="space-y-5">
@@ -105,41 +98,37 @@ export function SignIn() {
                     {" "}
                     Email address{" "}
                   </label>
+                  {!formData["email"] && (
+                    <span className="text-red-500"> * </span>
+                  )}
                   <div className="mt-2">
                     <input
-                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       type="email"
                       placeholder="Email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      id="email"
+                      onChange={handleChange}
                     ></input>
                   </div>
                 </div>
                 <div>
-                  <div className="flex items-center justify-between">
-                    <label
-                      htmlFor=""
-                      className="text-base font-medium text-gray-900"
-                    >
-                      {" "}
-                      Password{" "}
-                    </label>
-                    <a
-                      href="#"
-                      title=""
-                      className="text-sm font-semibold text-black hover:underline"
-                    >
-                      {" "}
-                      Forgot password?{" "}
-                    </a>
-                  </div>
+                  <label
+                    htmlFor=""
+                    className="text-base font-medium text-gray-900"
+                  >
+                    {" "}
+                    Password{" "}
+                  </label>{" "}
+                  {!formData["password"] && (
+                    <span className="text-red-500"> * </span>
+                  )}
                   <div className="mt-2">
                     <input
-                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                       type="password"
                       placeholder="Password"
-                      value={password}
-                      onChange={(p) => setPassword(p.target.value)}
+                      id="password"
+                      onChange={handleChange}
                     ></input>
                   </div>
                 </div>
@@ -154,32 +143,31 @@ export function SignIn() {
                     {loading ? "Loading..." : "Sign In"}
                   </button>
                 </div>
+                <a
+                  href="#"
+                  title=""
+                  className="text-sm font-semibold text-black hover:underline"
+                >
+                  {" "}
+                  Forgot password?{" "}
+                </a>
               </div>
             </form>
-            <div className="mt-3 space-y-3">
-              <button
-                type="button"
-                className="relative inline-flex w-full items-center justify-center rounded-md border border-gray-400 bg-white px-3.5 py-2.5 font-semibold text-gray-700 transition-all duration-200 hover:bg-gray-100 hover:text-black focus:bg-gray-100 focus:text-black focus:outline-none"
-              >
-                <span className="mr-2 inline-block">
-                  <svg
-                    className="h-6 w-6 text-rose-500"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a5.27 5.27 0 0 1-5.279-5.28 5.27 5.27 0 0 1 5.279-5.279c1.259 0 2.397.447 3.29 1.178l2.6-2.599c-1.584-1.381-3.615-2.233-5.89-2.233a8.908 8.908 0 0 0-8.934 8.934 8.907 8.907 0 0 0 8.934 8.934c4.467 0 8.529-3.249 8.529-8.934 0-.528-.081-1.097-.202-1.625z"></path>
-                  </svg>
-                </span>
-                Sign in with Google
-              </button>
+            <div className="mt-4 space-y-3">
+              <center>
+                {" "}
+                <span className="text-red-500">
+                  <b>*</b>
+                </span>{" "}
+                <b>indicates required field</b>
+              </center>
             </div>
           </div>
         </div>
 
         <div className="h-full w-full">
           <img
-            className="mx-auto h-full w-full rounded-md object-cover"
+            className="my-3 px-2 mx-auto h-full w-full rounded-md object-cover"
             src="https://images.unsplash.com/photo-1557425529-b1ae9c141e7d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
             alt=""
           />
