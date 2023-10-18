@@ -2,7 +2,7 @@ import Card from "./Card";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { set } from "mongoose";
+
 
 export default function PostForm() {
   const [postData, setPostData] = useState({});
