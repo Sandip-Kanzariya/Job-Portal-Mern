@@ -1,12 +1,26 @@
 # Job-Portal Using MERN
 
+### Run Project 
+
+```
+go inside job-portal
+
+cd job-portal
+npm install 
+
+cd frontend 
+npm install
+npm start 
+
+nodemon index.js / node index.js 
+```
+
 ### .env file for
 
 ```
 NODE_ENV = development / production
 PORT = 4500
-DATABASE =
-
+DATABASE = 
 ```
 
 ### Dependencies
@@ -35,7 +49,5 @@ REACT_APP_CLOUD_API =
 ### Dependencies
 
 ```
-
-
 
 ```
