@@ -22,7 +22,7 @@ const menuItems = [
   },
   { // 3
     name: "Profile",
-    href: "/s",
+    href: "/profile",
     active: false,
   },
   { // 4

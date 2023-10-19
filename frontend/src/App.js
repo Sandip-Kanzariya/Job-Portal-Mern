@@ -14,6 +14,7 @@ import PostForm from "./components/post/PostForm";
 import { Auth } from "./components/company/Auth";
 import Apply from "./components/post/Apply";
 import CmpPost from "./components/company/CmpPost";
+import Profile from "./components/user/Profile";
 
 function App() {
   const BASE_URI = process.env.REACT_APP_API_URL;
@@ -26,6 +27,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/profile" element={<Profile />} />
+        
         <Route path="/company" element={<Auth />} />
         <Route path="/company/add-post" element={<PostForm />} />
         <Route path="/company/my-posts" element={<CmpPost />} />
