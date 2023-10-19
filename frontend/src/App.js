@@ -32,9 +32,6 @@ function App() {
         
         <Route
           path="/post/:postid"
-          loader={({ params }) => {
-            return fetch(`${BASE_URI}/company/post/${params.postid}`);
-          }}
           element={<Apply />}
         />
 

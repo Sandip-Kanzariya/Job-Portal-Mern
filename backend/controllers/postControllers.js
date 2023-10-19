@@ -28,6 +28,10 @@ const applyPostController = async (req, res) => {
 
   const post = await Post.findById(req.params.postid);
 
+  if(post.applied.indexOf(req.body.applied) !== -1){
+    return res.status(400).json({msg: "Already Applied For This Post"});
+  }
+  
   const filter = { _id : req.params.postid };
   const update = { applied : [...post.applied, req.body.applied]};
 

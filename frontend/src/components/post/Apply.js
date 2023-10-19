@@ -7,10 +7,14 @@ const Apply = () => {
   const BASE_URI = process.env.REACT_APP_API_URL;
 
   const authUser = localStorage.getItem("user");
-  const applyId = JSON.parse(authUser)._id
+  const applyId = JSON.parse(authUser)._id;
 
   const [title, setTitle] = useState();
   const [role, setRole] = useState();
+  const [error, setError] = useState("");
+
+  const userAuth = localStorage.getItem("user");
+  const userId = JSON.parse(userAuth)._id;
 
   const getPost = async () => {
     try {
@@ -32,25 +36,29 @@ const Apply = () => {
   }, []);
 
   const submitData = async () => {
+    try {
 
-      try{
-          let result = await fetch(`${BASE_URI}/company/post/${postid}`, {
-              method : "put",
-              headers : {
-                  "Content-Type" : "application/json",
-              },
-              body : JSON.stringify({
-                  applied : applyId,
-              })
-          });
+      let result = await fetch(`${BASE_URI}/company/post/${postid}`, {
+        method: "put",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          applied: applyId,
+        }),
+      });
 
-          result = await result.json();
+      result = await result.json();
 
-          console.log(result);
+      if(!result.ok){
+        setError(result.msg);
+        return;
       }
-      catch(err){
-          console.log(err);
-      }
+
+      console.log(result);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -60,7 +68,7 @@ const Apply = () => {
           <h2 className="text-2xl font-bold leading-tight text-black">
             Apply For Post
           </h2>
-
+          <center className="text-red-500"> {error} </center>
           <form action="#" method="POST" className="mt-2">
             <div className="space-y-5">
               <div>
@@ -126,6 +134,7 @@ const Apply = () => {
               <div>
                 <button
                   type="button"
+                  disabled={error ? true : false}
                   className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
                   onClick={submitData}
                 >
