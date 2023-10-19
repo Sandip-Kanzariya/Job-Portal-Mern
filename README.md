@@ -6,7 +6,7 @@
 NODE_ENV = development / production
 PORT = 4500
 DATABASE =
-JWT_SECRET = secret_key
+
 ```
 
 ### Dependencies
@@ -36,6 +36,6 @@ REACT_APP_CLOUD_API =
 
 ```
 
-npm i @reduxjs/toolkit react-redux redux-persist
+
 
 ```

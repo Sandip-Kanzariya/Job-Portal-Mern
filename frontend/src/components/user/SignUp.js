@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import { useNavigate, useActionData, Link } from "react-router-dom";
 
 export default function SignUp() {
@@ -65,6 +65,15 @@ export default function SignUp() {
       setIsError("Something Went Wrong");
     }
   };
+
+  useEffect(() => {
+    const companyAuth = localStorage.getItem("company");
+    const userAuth = localStorage.getItem("user");
+
+    if (companyAuth || userAuth) {
+      navigate("/");
+    }
+  });
 
   return (
     <section>

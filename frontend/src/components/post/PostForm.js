@@ -1,13 +1,11 @@
 import Card from "./Card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-
 
 export default function PostForm() {
   const [postData, setPostData] = useState({});
   const [isError, setIsError] = useState("");
-
 
   const handleChange = (e) => {
     setPostData({ ...postData, [e.target.id]: e.target.value.trim() });
@@ -18,7 +16,11 @@ export default function PostForm() {
   const [url, setUrl] = useState();
   //
   const companyAuth = localStorage.getItem("company");
-  const company = JSON.parse(companyAuth)._id;
+
+  let company;
+  if (companyAuth) {
+    company = JSON.parse(companyAuth)._id;
+  }
 
   const navigate = useNavigate();
 
@@ -38,25 +40,29 @@ export default function PostForm() {
         console.log("URL : " + url);
       })
       .catch((err) => console.log(err));
-
   };
 
   const handleImage = async (e) => {
     setImage(e.target.files[0]);
 
     await storeImage();
-  }
+  };
 
   const storePost = async () => {
     // Image Upload
     await storeImage();
 
     setIsError("");
-    if (!url || !postData["title"] || !postData["role"] || !postData["vacancy"] || !postData["description"]) {
+    if (
+      !url ||
+      !postData["title"] ||
+      !postData["role"] ||
+      !postData["vacancy"] ||
+      !postData["description"]
+    ) {
       setIsError("");
       return;
     }
-
 
     // setIsLoading(true);
     //
@@ -82,12 +88,15 @@ export default function PostForm() {
     } catch (err) {
       console.log();
     }
-
-    // setIsLoading(false);
-
-    // Store In Browser Local Storage
-    // localStorage.setItem("user", JSON.stringify(result));
   };
+
+  useEffect(() => {
+    const companyAuth = localStorage.getItem("company");
+
+    if (!companyAuth) {
+      navigate("/company");
+    }
+  });
 
   return (
     <section className="">
@@ -100,16 +109,14 @@ export default function PostForm() {
           <form action="#" method="POST" className="mt-2">
             <div className="space-y-5">
               <div>
-                 
-                  <label
-                    htmlFor="image"
-                    className="text-base font-medium text-gray-900"
-                  >
-                    Post Image{" "}
-                  </label>{!url && (
-                    <span className="text-red-500"> * </span>
-                  )}
-                 
+                <label
+                  htmlFor="image"
+                  className="text-base font-medium text-gray-900"
+                >
+                  Post Image{" "}
+                </label>
+                {!url && <span className="text-red-500"> * </span>}
+
                 <div className="mt-2">
                   <input
                     className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
@@ -126,86 +133,79 @@ export default function PostForm() {
                 >
                   {" "}
                   Title{" "}
-                </label> {!postData["title"] && (
+                </label>{" "}
+                {!postData["title"] && (
                   <span className="text-red-500"> * </span>
                 )}
-                
                 <div className="mt-2">
                   <input
                     className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                     id="title"
                     type="text"
                     placeholder="Title"
-                    
                     onChange={handleChange}
                   ></input>
                 </div>
               </div>
 
               <div>
-                
-                  <label
-                    htmlFor=""
-                    className="text-base font-medium text-gray-900"
-                  >
-                    {" "}
-                    Role{" "}
-                  </label>{!postData["role"] && (
-                    <span className="text-red-500"> * </span>
-                  )}
+                <label
+                  htmlFor=""
+                  className="text-base font-medium text-gray-900"
+                >
+                  {" "}
+                  Role{" "}
+                </label>
+                {!postData["role"] && <span className="text-red-500"> * </span>}
 
-                
                 <div className="mt-2">
                   <input
                     className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                     id="role"
                     type="text"
                     placeholder="Role"
-                    
                     onChange={handleChange}
                   ></input>
                 </div>
               </div>
               <div>
-                
-                  <label
-                    htmlFor=""
-                    className="text-base font-medium text-gray-900"
-                  >
-                    Vacancy{" "}
-                  </label>{!postData["vacancy"] && (
-                    <span className="text-red-500"> * </span>
-                  )}
-              
+                <label
+                  htmlFor=""
+                  className="text-base font-medium text-gray-900"
+                >
+                  Vacancy{" "}
+                </label>
+                {!postData["vacancy"] && (
+                  <span className="text-red-500"> * </span>
+                )}
+
                 <div className="mt-2">
                   <input
                     className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                     id="vacancy"
                     type="number"
                     placeholder="Vacancy"
-                    
                     onChange={handleChange}
                   ></input>
                 </div>
               </div>
 
               <div>
-                 
-                  <label
-                    htmlFor=""
-                    className="text-base font-medium text-gray-900"
-                  >
-                    Description{" "}
-                  </label>{!postData["description"] && (
-                    <span className="text-red-500"> * </span>
-                  )}
-                
+                <label
+                  htmlFor=""
+                  className="text-base font-medium text-gray-900"
+                >
+                  Description{" "}
+                </label>
+                {!postData["description"] && (
+                  <span className="text-red-500"> * </span>
+                )}
+
                 <div className="mt-2">
                   <textarea
                     className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                     id="description"
                     placeholder="Description"
-                   
                     onChange={handleChange}
                   ></textarea>
                 </div>

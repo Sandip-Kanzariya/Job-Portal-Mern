@@ -2,15 +2,21 @@ import React, { useEffect, useState } from "react";
 
 import Card from "../post/Card";
 import { Divide, Loader } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function CmpPost() {
-
   const [postList, setPostList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
   const companyAuth = localStorage.getItem("company");
-  const company = JSON.parse(companyAuth)._id;
+
+  const navigate = useNavigate();
+  
+  let company;
+  if (companyAuth) {
+    company = JSON.parse(companyAuth)._id;
+  }
 
   //
   const BASE_URI = process.env.REACT_APP_API_URL;
@@ -35,10 +41,16 @@ export default function CmpPost() {
 
   useEffect(() => {
     getPosts();
+
+    const companyAuth = localStorage.getItem("company");
+
+    if (!companyAuth) {
+      navigate("/company");
+    }
   }, []);
 
-  postList.map((item, index) => { 
-    if(item.company !== company){
+  postList.map((item, index) => {
+    if (item.company !== company) {
       postList.splice(index, 1);
     }
   });

@@ -67,7 +67,9 @@ export function Auth() {
 
   useEffect(() => {
     const companyAuth = localStorage.getItem("company");
-    if (companyAuth) {
+    const userAuth = localStorage.getItem("user");
+
+    if (companyAuth || userAuth) {
       navigate("/");
     }
   });
