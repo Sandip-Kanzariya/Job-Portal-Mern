@@ -1,12 +1,18 @@
 const { errorH } = require("../middleware/errorMiddleware");
 const User = require("../models/userModel");
 const { generateToken } = require("../utils/generateToken");
+const bcrypt  =   require('bcryptjs');
+
+const dotenv = require("dotenv");
+dotenv.config({ path: "../.env" });
+
+const nodemailer = require('nodemailer')
 
 // @desc    Registration user &
 // @route   POST /user/register
 // @access  Public
 const registerUser = async (req, res, next) => {
-  const { name, email, password } = req.body;
+  let { name, email, password } = req.body;
 
   const userExists = await User.findOne({ email });
 
@@ -14,7 +20,11 @@ const registerUser = async (req, res, next) => {
     return res.status(400).json({ msg: "User already exists with this email" });
   }
 
+  const salt = await bcrypt.genSalt(10);
+  password =  await bcrypt.hash(password, salt);
+
   try {
+    
     const user = await User.create({
       name,
       email,
@@ -77,9 +87,27 @@ const profile = (req, res) => {
   res.status(200).json({ message: "User Profile" });
 };
 
+// @desc    
+// @route   PUT /user/update/:id
+// @access  Private
+const updateProfile = async (req, res) => {
+
+  let user = await User.findOne({ _id: req.params.id });
+  user.status = req.body.status;
+  user = await user.save();
+
+  res.status(200).json({ message: "User Profile" });
+}
+
+const sendAuthMail = async (req, res) => {
+   // TODO :
+}
 module.exports = {
   registerUser,
   loginUser,
   logoutUser,
   profile,
+  updateProfile,
+
+  sendAuthMail
 };

@@ -16,6 +16,11 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    status: {
+      type: String, // Assuming 'status' is a string
+      enum: ['pending', 'accepted', 'rejected'],
+      default: 'pending',
+    },
   },
   {
     timestamps: true,
@@ -24,12 +29,12 @@ const userSchema = mongoose.Schema(
 
 
 // Encrypt password using bcrypt
-userSchema.pre('save', async function (){
+// userSchema.pre('save', async function (){
   
-    const salt = await bcrypt.genSalt(10);
-    this.password =  await bcrypt.hash(this.password, salt);
+//     const salt = await bcrypt.genSalt(10);
+//     this.password =  await bcrypt.hash(this.password, salt);
 
-});
+// });
 
 // Login Check : 
 // Match user entered password to hashed password in database

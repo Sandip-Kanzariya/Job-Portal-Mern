@@ -15,6 +15,7 @@ import { Auth } from "./components/company/Auth";
 import Apply from "./components/post/Apply";
 import CmpPost from "./components/company/CmpPost";
 import Profile from "./components/user/Profile";
+import ApplicantsDetails from "./components/company/ApplicantsDetails";
 
 function App() {
   const BASE_URI = process.env.REACT_APP_API_URL;
@@ -28,21 +29,16 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/profile" element={<Profile />} />
-        
+
         <Route path="/company" element={<Auth />} />
         <Route path="/company/add-post" element={<PostForm />} />
         <Route path="/company/my-posts" element={<CmpPost />} />
-        
-        <Route
-          path="/post/:postid"
-          element={<Apply />}
-        />
+        <Route path="/company/my-posts/:postid" element={<ApplicantsDetails />} />
 
+        <Route path="/post/:postid" element={<Apply />} />
       </Routes>
     </BrowserRouter>
     // </div>
-
-   
   );
 }
 

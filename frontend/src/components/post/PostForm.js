@@ -11,10 +11,6 @@ export default function PostForm() {
     setPostData({ ...postData, [e.target.id]: e.target.value.trim() });
   };
 
-  //
-  const [image, setImage] = useState();
-  const [url, setUrl] = useState();
-  //
   const companyAuth = localStorage.getItem("company");
 
   let company;
@@ -24,34 +20,26 @@ export default function PostForm() {
 
   const navigate = useNavigate();
 
-  const storeImage = async () => {
-    const formData = new FormData();
-    formData.append("file", image);
-    formData.append("upload_preset", `${process.env.REACT_APP_PRESET}`);
-    formData.append("cloud_name", `${process.env.REACT_APP_CLOUD}`);
-
+  const [image, setImage] = useState("");
+  const [url, setUrl] = useState("");
+  const uploadImage = () => {
+    const data = new FormData();
+    data.append("file", image);
+    data.append("upload_preset", `${process.env.REACT_APP_PRESET}`);
+    data.append("cloud_name", `${process.env.REACT_APP_CLOUD}`);
     fetch(`${process.env.REACT_APP_CLOUD_API}`, {
       method: "post",
-      body: formData,
+      body: data,
     })
       .then((resp) => resp.json())
-      .then((d) => {
-        setUrl(d.url);
-        console.log("URL : " + url);
+      .then((data) => {
+        setUrl(data.url);
+        console.log(data.url);
       })
       .catch((err) => console.log(err));
   };
 
-  const handleImage = async (e) => {
-    setImage(e.target.files[0]);
-
-    await storeImage();
-  };
-
   const storePost = async () => {
-    // Image Upload
-    await storeImage();
-
     setIsError("");
     if (
       !url ||
@@ -81,12 +69,15 @@ export default function PostForm() {
         },
       });
 
+      navigate("/");
       result = await result.json();
+
       if (result) {
+        console.log("Navigating");
         navigate("/");
       }
     } catch (err) {
-      console.log();
+      console.log("Exe : " + err);
     }
   };
 
@@ -106,7 +97,7 @@ export default function PostForm() {
             Write Post
           </h2>
 
-          <form action="#" method="POST" className="mt-2">
+          <form className="mt-2">
             <div className="space-y-5">
               <div>
                 <label
@@ -117,13 +108,20 @@ export default function PostForm() {
                 </label>
                 {!url && <span className="text-red-500"> * </span>}
 
-                <div className="mt-2">
+                <div className="mt-2 flex">
                   <input
-                    className="flex h-10 w-full rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex h-10 rounded-md border border-black bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                     id="image"
                     type="file"
-                    onChange={handleImage}
+                    onChange={(e) => setImage(e.target.files[0])}
                   ></input>
+                  <button
+                    type="button"
+                    onClick={uploadImage}
+                    className="inline-flex w-1/3 items-center justify-center rounded-md bg-black ml-6 px-3 py-2 font-semibold leading-5 text-white hover:bg-black/80"
+                  >
+                    Upload
+                  </button>
                 </div>
               </div>
               <div>
@@ -220,6 +218,17 @@ export default function PostForm() {
                   Post <ArrowRight className="ml-2" size={16} />
                 </button>
               </div>
+
+              <div className="mt-4 space-y-3">
+              <center>
+                {" "}
+                <span className="text-red-500">
+                  <b>*</b>
+                </span>{" "}
+                <b>indicates required field</b>
+              </center>
+            </div>
+            
             </div>
           </form>
         </div>

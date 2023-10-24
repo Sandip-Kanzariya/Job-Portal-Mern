@@ -25,6 +25,7 @@ const postSchema = mongoose.Schema(
     },
     company : {
         type : mongoose.Schema.Types.ObjectId,
+        required : true,
         ref : "Company"
     },
     applied : [{

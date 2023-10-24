@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from "react";
 import Apply from "./Apply";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Building2 } from "lucide-react";
-
 
 export default function Card(props) {
   props = props.post;
 
   //
   const user = JSON.parse(localStorage.getItem("user"));
+  const companyAuth = JSON.parse(localStorage.getItem("company"));
+
+  const navigate = useNavigate();
+
   const BASE_URI = process.env.REACT_APP_API_URL;
 
-  const [id, setId] = useState(props._id);
+  const [id, setId] = useState(props._id); // post Id
   const [title, setTitle] = useState(props.title);
   const [role, setRole] = useState(props.role);
   const [desc, setDesc] = useState(props.description);
@@ -69,15 +72,60 @@ export default function Card(props) {
               Applications For this post : {applys}
             </span>
           </div>
+          {user ? (
+            <Link to={user ? "/post/" + id : "/signin"}>
+              <button
+                type="button"
+                className="mt-4 w-full rounded-sm bg-black px-2 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+              >
+                Apply
+              </button>
+            </Link>
+          ) : (
+            <></>
+          )}
 
-          <Link to={user ? "/post/" + id : "/signin"}>
-            <button
-              type="button"
-              className="mt-4 w-full rounded-sm bg-black px-2 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-            >
-              Apply
-            </button>
-          </Link>
+          {companyAuth ? (
+            <div className="flex">
+              <Link to={"/company/my-posts/" + id}>
+                <button
+                  type="button"
+                  className="mt-4 w-full mr-2 rounded-sm bg-black px-2 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                >
+                  Applications
+                </button>
+              </Link>
+
+              <Link to={""}>
+                <button
+                  type="button"
+                  className="mt-4 w-full ml-2 rounded-sm bg-red-600 px-2 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                  onClick={async () => {
+
+                    let result = await fetch(
+                      `${BASE_URI}/company/post/${id}`,
+                      {
+                        method: "delete",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                      }
+                    );
+
+                    // result = await result.json();
+
+                    if(result.ok){
+                      navigate("/company/my-posts");
+                    }
+                  }}
+                >
+                  Delete
+                </button>
+              </Link>
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </div>

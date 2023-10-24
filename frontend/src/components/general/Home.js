@@ -7,7 +7,7 @@ export default function Home() {
   const [postList, setPostList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-  
+
   //
   const BASE_URI = process.env.REACT_APP_API_URL;
 
@@ -35,17 +35,19 @@ export default function Home() {
 
   return (
     // <div className="flex flex-wrap items-center">
-    <div className="grid grid-cols-1 gap-[1px] md:grid-cols-2">
-      {/* <button onClick={getPosts}>Data</button>*/}
-      {isLoading && <Loader />}
+    <>
+      <center className="my-8">{isLoading && <Loader />}</center>
+      <div className="grid grid-cols-1 gap-[1px] md:grid-cols-2">
+        {/* <button onClick={getPosts}>Data</button>*/}
 
-      {isError ? (
-        <p className="text-red-600">Something Went Wrong</p>
-      ) : postList.length > 0 ? (
-        postList.map((item, index) => <Card className="m-5" post={item} />)
-      ) : (
-        !isLoading && <h1>There is yet not any Post </h1>
-      )}
-    </div>
+        {isError ? (
+          <p className="text-red-600">Something Went Wrong</p>
+        ) : postList.length > 0 ? (
+          postList.map((item, index) => <Card className="m-5" post={item} />)
+        ) : (
+          !isLoading && <h1>There is yet not any Post </h1>
+        )}
+      </div>
+    </>
   );
 }

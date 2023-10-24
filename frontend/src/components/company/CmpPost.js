@@ -12,7 +12,7 @@ export default function CmpPost() {
   const companyAuth = localStorage.getItem("company");
 
   const navigate = useNavigate();
-  
+
   let company;
   if (companyAuth) {
     company = JSON.parse(companyAuth)._id;
@@ -49,11 +49,13 @@ export default function CmpPost() {
     }
   }, []);
 
-  postList.map((item, index) => {
-    if (item.company !== company) {
-      postList.splice(index, 1);
-    }
-  });
+  if (postList.length > 0) {
+    postList.map((item, index) => {
+      if (item.company !== company) {
+        postList.splice(index, 1);
+      }
+    });
+  }
 
   return (
     // <div className="flex flex-wrap items-center">
