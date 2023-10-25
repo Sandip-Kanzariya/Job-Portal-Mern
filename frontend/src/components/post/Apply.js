@@ -113,7 +113,7 @@ const Apply = () => {
                 </div>
               </div>
 
-              <div>
+              {/*<div>
                 <div className="flex items-center justify-between">
                   <label
                     htmlFor="image"
@@ -129,7 +129,7 @@ const Apply = () => {
                     type="file"
                   ></input>
                 </div>
-              </div>
+              </div>*/}
 
               <div>
                 <button

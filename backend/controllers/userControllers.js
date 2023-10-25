@@ -101,6 +101,31 @@ const updateProfile = async (req, res) => {
 
 const sendAuthMail = async (req, res) => {
    // TODO :
+
+   const transporter = nodemailer.createTransport({
+    service : 'gmail',
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.PASSWORD,
+    },
+  });
+  
+  
+  let message = {
+    from: process.env.EMAIL, // sender address
+    // TODO: 
+    to: '', // list of receivers 
+    subject: "Verify Your Email", // Subject line
+    text: "Hello, From Your next Job !", // plain text body
+    html: "<b>Hello world?</b>", // html body
+  }
+
+  transporter.sendMail(message).then( ()=> {
+    return res.status(201).json({msg : 'You have receive an emaail.'})
+  }).catch(error => {
+    return res.status(500).json({error})    
+  })
+  
 }
 module.exports = {
   registerUser,

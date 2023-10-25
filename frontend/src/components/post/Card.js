@@ -102,6 +102,17 @@ export default function Card(props) {
                   className="mt-4 w-full ml-2 rounded-sm bg-red-600 px-2 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
                   onClick={async () => {
 
+                    let post = await fetch(`${BASE_URI}/company/post/${id}`, {
+                      method: "get",
+                    });
+                    post = await post.json();
+              
+                    if (post.company !== companyAuth._id) {
+                      alert("You are not authorized to delete this post");
+                      navigate("/");
+                      return;
+                    }
+                    
                     let result = await fetch(
                       `${BASE_URI}/company/post/${id}`,
                       {

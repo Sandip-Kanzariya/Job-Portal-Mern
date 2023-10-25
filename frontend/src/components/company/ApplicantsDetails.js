@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 
 export default function ApplicantsDetails() {
   const { postid } = useParams();
+  const companyAuth = localStorage.getItem("company");
+
+  const navigate = useNavigate();
+
   const BASE_URI = process.env.REACT_APP_API_URL;
   const [applicantData, setApplicantData] = useState([]);
 
@@ -23,7 +27,6 @@ export default function ApplicantsDetails() {
       setStatus(status);
       result = await result.json();
       console.log(result);
-  
     } catch (err) {
       console.log(err);
     }
@@ -31,6 +34,18 @@ export default function ApplicantsDetails() {
 
   const getApplicants = async () => {
     try {
+      let post = await fetch(`${BASE_URI}/company/post/${postid}`, {
+        method: "get",
+      });
+      post = await post.json();
+
+
+      if (post.company !== JSON.parse(companyAuth)._id) {
+        alert("You are not authorized to view this page");
+        navigate("/");
+        return;
+      }
+
       let userList = await fetch(`${BASE_URI}/company/post/users/${postid}`, {
         method: "get",
       });
@@ -118,7 +133,13 @@ export default function ApplicantsDetails() {
                         {}
                       </td>
                       <td className="whitespace-nowrap px-4 py-4">
-                        <span className= { applicant.status == "accepted" ? "inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5text-green-800" : "inline-flex rounded-full bg-white px-2 text-xs font-semibold leading-5 text-red-700"}>
+                        <span
+                          className={
+                            applicant.status === "accepted"
+                              ? "inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5text-green-800"
+                              : "inline-flex rounded-full bg-white px-2 text-xs font-semibold leading-5 text-red-700"
+                          }
+                        >
                           {applicant.status}
                         </span>
                       </td>
