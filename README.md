@@ -1,5 +1,6 @@
 # Job-Portal Using MERN
 
+ The Job Portal is a dynamic web application designed to bridge the gap between companies and job seekers, offering a seamless platform for job posting and application management. The system provides distinct functionalities for companies and job seekers to create an efficient recruitment process.
 ## Project Overview : 
 
 ![erdiagram](https://github.com/Sandip-Kanzariya/Job-Portal-Mern/assets/105594748/6803ff33-13b4-4eaf-8c0a-7dfd714a53d6)
@@ -7,9 +8,26 @@
 
 ### Roles & Functionality : 
 
-#### Companies : 
+### 1. For Companies  
+- **User Authentication**:  
+  - Secure registration and login functionality.  
+- **Job Posting**:  
+  - Create job posts with details such as job descriptions, vacancy requirements, and accompanying photos.  
+- **Application Management**:  
+  - Review candidate applications.  
+  - Update application statuses (accept/reject).  
+- **Post Management**:  
+  - Edit or delete job posts as needed.  
 
-#### Job Seekers : 
+### 2. For Job Seekers  
+- **User Authentication**:  
+  - Secure registration and login functionality.  
+- **Job Applications**:  
+  - Browse and apply for available job posts.  
+- **Profile Management**:  
+  - View and manage their own profiles.  
+- **Privacy**:  
+  - Job seekers cannot view other users' profiles, ensuring confidentiality.  
 
 ## Installation & Run this Project locally
 
